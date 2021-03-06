@@ -6,15 +6,23 @@ const AnimatedInternal: FC = (props: any) => {
   const [cleanedProps, setCleanedProps] = useState(props);
   const [mountId, setMountId] = useState("");
   const [unmountId, setUnmountId] = useState("");
+  const [styleSheet, setStyleSheet] = useState<any>(null);
   const CustomTag = props.tagName as keyof JSX.IntrinsicElements;
 
   useEffect(() => {
-    let styleSheet: any = document.styleSheets[0];
-    if (!styleSheet) {
-      styleSheet = document.createElement("style");
-      document.body.appendChild(styleSheet);
-      return;
+    if(typeof document !== "undefined") {
+      let newStyleSheet: any = document.styleSheets[0];
+      if (!newStyleSheet) {
+        newStyleSheet = document.createElement("style");
+        document.appendChild(newStyleSheet);
+      }
+      setStyleSheet(newStyleSheet);
     }
+    
+  }, []);
+  
+  useEffect(() => {
+    if(!styleSheet) return;
 
     if (!!props.mountAnimId) {
       setMountId(props.mountAnimId);
@@ -55,6 +63,7 @@ const AnimatedInternal: FC = (props: any) => {
 
     setCleanedProps(newCleanedProps);
   }, [
+    styleSheet,
     props.mountAnim,
     props.unmountAnim,
     props.mountAnimId,
