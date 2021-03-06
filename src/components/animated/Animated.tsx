@@ -59,8 +59,6 @@ const AnimatedInternal: FC = (props: any) => {
     props.unmountAnim,
     props.mountAnimId,
     props.unmountAnimId,
-    document,
-    document.styleSheets.length,
   ]);
 
   useEffect(() => {

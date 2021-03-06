@@ -14,16 +14,16 @@ Platform:
   darwin x64
 
 Trace: 
-  Error: EACCES: permission denied, mkdir '/Users/migueljimenez/Documents/git/react-mount-animation/node_modules/@babel/core/node_modules/ms'
+  Error: EACCES: permission denied, mkdir '/Users/migueljimenez/Documents/git/react-mount-animation/node_modules/@babel/core/node_modules/debug'
 
 npm manifest: 
   {
     "name": "react-mount-animation",
-    "version": "1.0.0",
-    "description": "A template for a React + TypeScript + npm package",
+    "version": "0.0.1",
+    "description": "React component to easily make animations when mount and unmount a component.",
     "repository": {
       "type": "git",
-      "url": "https://github.com/andy770921/react-ts-npm-boilerplate.git"
+      "url": "https://github.com/mijim/react-mount-animation.git"
     },
     "license": "MIT",
     "author": "Miguel Jiménez Benajes",
@@ -36,6 +36,12 @@ npm manifest:
       "react",
       "typescript",
       "eslint",
+      "mount",
+      "unmount",
+      "anim",
+      "animation",
+      "keyframes",
+      "css",
       "storybook",
       "npm"
     ],
