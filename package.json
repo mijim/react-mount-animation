@@ -4,7 +4,7 @@
   "description": "React component to easily make animations when mount and unmount a component.",
   "repository": {
     "type": "git",
-    "url": "https://github.com/andy770921/react-ts-npm-boilerplate.git"
+    "url": "https://github.com/mijim/react-mount-animation.git"
   },
   "license": "MIT",
   "author": "Miguel Jiménez Benajes",

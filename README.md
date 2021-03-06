@@ -115,4 +115,4 @@ const MyComponent = () => {
 <br>
 <br>
 
-The project has just started and you are invited to collaborate. You can contact me through <migueljimenezbenajes@gmail.com>.
+The project has just started and NPM has not yet been uploaded until it is well tested. You are invited to collaborate 😋, if you are interested, you can contact me through <migueljimenezbenajes@gmail.com>.
