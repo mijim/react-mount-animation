@@ -1,0 +1,22 @@
+{
+    "compilerOptions": {
+      "target": "es5",
+      "module": "esnext",
+      "lib": ["ES2017", "ES7", "ES6", "DOM"],
+      "strict": true,
+      "noImplicitAny": false,
+      "removeComments": true,
+      "preserveConstEnums": true,
+      "baseUrl": "./",
+      "outDir": "./dist",
+      "typeRoots": ["node_modules/@types"],
+      "esModuleInterop": true,
+      "sourceMap": false,
+      "declaration": true,
+      "noEmitOnError": true,
+      "jsx": "react-jsx"
+    },
+    "include": ["src/*.ts","src/*.tsx"],
+    "exclude": ["node_modules", "dist"]
+}
+  
