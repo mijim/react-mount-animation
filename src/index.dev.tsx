@@ -22,21 +22,20 @@ const TestComponent = () => {
             100% {opacity: 1}
             100% {box-shadow: 0px 0px 13px 4px rgba(0,0,0,1), inset 0px 0px 2px 2px rgba(255,255,255,0.2)}
           `}
-        unmountAnim={`
-        0% {
-          opacity: 1;
-        }
-        10% {
-          transform: rotate(-20deg);
-        }
-        100% {
-          opacity: 0;
-        }
-        `}
+        // unmountAnim={`
+        // 0% {
+        //   opacity: 1;
+        // }
+        // 10% {
+        //   transform: rotate(-20deg);
+        // }
+        // 100% {
+        //   opacity: 0;
+        // }
+        // `}
         //mountAnimId={""}
         //unmountAnimId={"unmount-anim"}
         time={1}
-        href="http://google.com"
         style={{
           width: "fit-content",
           fontSize: 24,

@@ -1,6 +1,6 @@
 {
   "name": "react-mount-animation",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "React component to easily make animations when mount and unmount a component.",
   "repository": {
     "type": "git",

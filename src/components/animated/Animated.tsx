@@ -14,16 +14,14 @@ const AnimatedInternal: FC = (props: any) => {
       let newStyleSheet: any = document.styleSheets[0];
       if (!newStyleSheet) {
         newStyleSheet = document.createElement("style");
-        document.appendChild(newStyleSheet);
+        document.head.appendChild(newStyleSheet);
       }
-      setStyleSheet(newStyleSheet);
+      setStyleSheet(document.styleSheets[0]);
     }
-    
   }, []);
   
   useEffect(() => {
     if(!styleSheet) return;
-
     if (!!props.mountAnimId) {
       setMountId(props.mountAnimId);
     } else {
@@ -32,7 +30,7 @@ const AnimatedInternal: FC = (props: any) => {
           ${props.mountAnim}
       }
       `;
-      styleSheet.insertRule(keyframes, styleSheet.cssRules.length);
+      styleSheet.insertRule(keyframes, styleSheet.cssRules?styleSheet.cssRules.length:0);
       setMountId(newMountId);
     }
 
@@ -44,7 +42,7 @@ const AnimatedInternal: FC = (props: any) => {
         ${props.unmountAnim ? props.unmountAnim : props.mountAnim}
       }
       `;
-      styleSheet.insertRule(keyframes, styleSheet.cssRules.length);
+      styleSheet.insertRule(keyframes, styleSheet.cssRules?styleSheet.cssRules.length:0);
       setUnmountId(newUnmountId);
     }
 
@@ -88,7 +86,7 @@ const AnimatedInternal: FC = (props: any) => {
         {...cleanedProps}
         style={{
           animation: `${props.show ? mountId : unmountId}
-           ${!!props.unmountTime && !props.show
+           ${props.unmountTime !== undefined && !props.show
             ?props.unmountTime
             :props.time
             ?props.time

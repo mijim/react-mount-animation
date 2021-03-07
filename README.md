@@ -111,6 +111,7 @@ const MyComponent = () => {
 | unmountAnim   | string  | Unmount animation indicated as string just like CSS keyframes. If this prop is not filled, the component will execute the mountAnim reversed when unmount.                                                                      |
 | mountAnimId   | string  | If you don't want to use mountAnim, you can specify the name of a keyframe defined in a CSS file. This will override mountAnim.     |
 | unmountAnimId | string  | If you don't want to use unmountAnim, you can specify the name of a keyframe defined in a CSS file. This will override unmountAnim. |
+| onAnimationEnd | function  | Function fired when the component ends its animation and unmounts |
 
 <br>
 <br>
