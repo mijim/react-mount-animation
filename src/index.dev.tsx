@@ -10,6 +10,9 @@ const TestComponent = () => {
       <button onClick={() => setShow(!show)}>SHOW/HIDE</button>
       <Animated.div
         show={show}
+        onMountEnd={() => console.log('-- MOUNT END --')}
+        onUnmountEnd={() => console.log('-- UNMOUNT END --')}
+        onAnimationEnd={() => console.log('-- ANIMATION END --')}
         mountAnim={`
             0% {border-radius: 4px}
             0% {opacity: 0}
@@ -22,17 +25,17 @@ const TestComponent = () => {
             100% {opacity: 1}
             100% {box-shadow: 0px 0px 13px 4px rgba(0,0,0,1), inset 0px 0px 2px 2px rgba(255,255,255,0.2)}
           `}
-        // unmountAnim={`
-        // 0% {
-        //   opacity: 1;
-        // }
-        // 10% {
-        //   transform: rotate(-20deg);
-        // }
-        // 100% {
-        //   opacity: 0;
-        // }
-        // `}
+        unmountAnim={`
+        0% {
+          opacity: 1;
+        }
+        10% {
+          transform: rotate(-20deg);
+        }
+        100% {
+          opacity: 0;
+        }
+        `}
         //mountAnimId={""}
         //unmountAnimId={"unmount-anim"}
         time={1}

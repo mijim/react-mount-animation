@@ -59,6 +59,8 @@ const AnimatedInternal: FC = (props: any) => {
     delete newCleanedProps["show"];
     delete newCleanedProps["time"];
     delete newCleanedProps["unmountTime"];
+    delete newCleanedProps["onMountEnd"];
+    delete newCleanedProps["onUnmountEnd"];
 
     setCleanedProps(newCleanedProps);
   }, [
@@ -75,6 +77,12 @@ const AnimatedInternal: FC = (props: any) => {
 
   const onAnimationEnd = () => {
     if (!props.show) setRender(false);
+    if(props.onMountEnd && props.show) {
+      props.onMountEnd();
+    }
+    if(props.onUnmountEnd && !props.show) {
+      props.onUnmountEnd();
+    }
     if (props.onAnimationEnd) {
       props.onAnimationEnd();
     }
