@@ -60,6 +60,7 @@ const AnimatedInternal: FC = (props: any) => {
     delete newCleanedProps["unmountAnimId"];
     delete newCleanedProps["show"];
     delete newCleanedProps["time"];
+    delete newCleanedProps["unmountTime"];
 
     setCleanedProps(newCleanedProps);
   }, [
@@ -87,7 +88,11 @@ const AnimatedInternal: FC = (props: any) => {
         {...cleanedProps}
         style={{
           animation: `${props.show ? mountId : unmountId}
-           ${props.time?props.time:1}s`,
+           ${!!props.unmountTime && !props.show
+            ?props.unmountTime
+            :props.time
+            ?props.time
+            :1}s`,
           animationDirection:
             props.show || !!props.unmountAnim || !!props.unmountAnimId
               ? ""
