@@ -1,4 +1,4 @@
-#  Easy React animations when mount and unmount components 🏃🏽‍♀️🚀
+#  Easy React mount/unmount animations with react-mount-animation 🏃🏽‍♀️🚀
 
 Add animations as you would from CSS (using keyframes) when mounting and unmounting React components with a very clear and easy syntax. The 'react-mount-animation' component takes care of mounting and unmounting the component through the 'show' attribute and executing the animations.
 
