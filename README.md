@@ -7,6 +7,25 @@ Add animations as you would from CSS (using keyframes) when mounting and unmount
 
 ### Simple Example
 
+Instead of this (mount/unmount without animation):
+```JSX
+const MyComponent = () => {
+  const [isMounted, setIsMounted] = useState(false);
+
+  ...
+
+  return (
+   <>
+      {isMounted && (
+        <div>
+          Hi World!
+        </div>
+      )}
+   </>
+)
+...
+```
+We do this (same with animation):
 ```JSX
 import Animated from "react-mount-animation";
 
@@ -28,6 +47,7 @@ const MyComponent = () => {
 )
 ...
 ```
+
 <br>
 <br>
 
@@ -106,7 +126,9 @@ const MyComponent = () => {
 |---------------|---------|-------------------------------------------------------------------------------------------------------------------------------------|
 | show*         | boolean | Used to indicate when the component has to be mounted and unmounted.                                                                |
 | time          | number  | The total duration of the mount animation. Default 1.                                                                    |
-| unmountTime          | number  | The total duration of the unmount animation. By default it takes the time prop.                                                                    |
+| unmountTime          | number  | The total duration of the unmount animation. By default it takes the time prop. 
+| delay          | number  | The total delay of the mount animation. Default 0.                                                                    |
+| unmountDelay          | number  | The total delay of the unmount animation. By default it takes the delay prop.                                                                    |
 | mountAnim*     | string  | Mount animation indicated as string just like CSS keyframes.                                                                        |
 | unmountAnim   | string  | Unmount animation indicated as string just like CSS keyframes. If this prop is not filled, the component will execute the mountAnim reversed when unmount.                                                                      |
 | mountAnimId   | string  | If you don't want to use mountAnim, you can specify the name of a keyframe defined in a CSS file. This will override mountAnim.     |

@@ -13,6 +13,8 @@ const TestComponent = () => {
         onMountEnd={() => console.log('-- MOUNT END --')}
         onUnmountEnd={() => console.log('-- UNMOUNT END --')}
         onAnimationEnd={() => console.log('-- ANIMATION END --')}
+        delay={2}
+        unmountDelay={3}
         mountAnim={`
             0% {border-radius: 4px}
             0% {opacity: 0}
@@ -57,6 +59,7 @@ const TestComponent = () => {
               85% {transform: translate(10px, 0)}
             `}
           time={1.1}
+          unmountDelay={3}
           style={{
             fontFamily: "Arial",
           }}

@@ -59,6 +59,8 @@ const AnimatedInternal: FC = (props: any) => {
     delete newCleanedProps["show"];
     delete newCleanedProps["time"];
     delete newCleanedProps["unmountTime"];
+    delete newCleanedProps["delay"];
+    delete newCleanedProps["unmountDelay"];
     delete newCleanedProps["onMountEnd"];
     delete newCleanedProps["onUnmountEnd"];
 
@@ -72,8 +74,16 @@ const AnimatedInternal: FC = (props: any) => {
   ]);
 
   useEffect(() => {
-    if (props.show) setRender(true);
-  }, [props.show]);
+    if (props.show) {
+      if(props.delay) {
+        setTimeout(() => {
+          setRender(true);
+        },props.delay*1000)
+      } else {
+        setRender(true);
+      }
+    }
+  }, [props.show, props.delay]);
 
   const onAnimationEnd = () => {
     if (!props.show) setRender(false);
@@ -93,7 +103,8 @@ const AnimatedInternal: FC = (props: any) => {
       <CustomTag
         {...cleanedProps}
         style={{
-          animation: `${props.show ? mountId : unmountId}
+          animation: `
+          ${props.show ? mountId : unmountId}
            ${props.unmountTime !== undefined && !props.show
             ?props.unmountTime
             :props.time
@@ -103,6 +114,9 @@ const AnimatedInternal: FC = (props: any) => {
             props.show || !!props.unmountAnim || !!props.unmountAnimId
               ? ""
               : "reverse",
+          animationDelay: `${props.unmountDelay !== undefined  && !props.show
+            ?props.unmountDelay
+            :0}s`,
           ...props.style,
         }}
         onAnimationEnd={onAnimationEnd}
