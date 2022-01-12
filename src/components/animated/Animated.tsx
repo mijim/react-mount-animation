@@ -19,7 +19,7 @@ const AnimatedInternal: FC = (props: any) => {
       setStyleSheet(document.styleSheets[0]);
     }
   }, []);
-  
+
   useEffect(() => {
     if(!styleSheet) return;
     if (!!props.mountAnimId) {
@@ -103,16 +103,15 @@ const AnimatedInternal: FC = (props: any) => {
       <CustomTag
         {...cleanedProps}
         style={{
-          animation: `
-          ${props.show ? mountId : unmountId}
-           ${props.unmountTime !== undefined && !props.show
+          animationName: `${props.show ? mountId : unmountId}`,
+          animationDuration: `${props.unmountTime !== undefined && !props.show
             ?props.unmountTime
             :props.time
             ?props.time
             :1}s`,
           animationDirection:
             props.show || !!props.unmountAnim || !!props.unmountAnimId
-              ? ""
+              ? "normal"
               : "reverse",
           animationDelay: `${props.unmountDelay !== undefined  && !props.show
             ?props.unmountDelay
