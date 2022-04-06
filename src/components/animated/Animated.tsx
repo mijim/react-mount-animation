@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 
 // Types
-import { RMAComponentProps, RMAComponent, HTMLElements } from '../../@types/animated'
+import { AnimatedComponentProps, AnimatedComponent, HTMLElements } from '../../@types/animated'
 
-const AnimatedInternal = <T extends keyof HTMLElements>(props: RMAComponentProps<T>): JSX.Element => {
+const AnimatedInternal = <T extends keyof HTMLElements>(props: AnimatedComponentProps<T>): JSX.Element => {
   const [shouldRender, setRender] = useState<boolean>(props.show)
-  const [cleanedProps, setCleanedProps] = useState<Partial<RMAComponentProps<T>>>(props)
+  const [cleanedProps, setCleanedProps] = useState<Partial<AnimatedComponentProps<T>>>(props)
   const [mountId, setMountId] = useState<string>('')
   const [unmountId, setUnmountId] = useState<string>('')
   const [styleSheet, setStyleSheet] = useState<any>(null)
@@ -108,6 +108,10 @@ const AnimatedInternal = <T extends keyof HTMLElements>(props: RMAComponentProps
             animationDirection:
               props.show || !!props.unmountAnim || !!props.unmountAnimId ? 'normal' : 'reverse',
             animationDelay: `${props.unmountDelay !== undefined && !props.show ? props.unmountDelay : 0}s`,
+            animationTimingFunction:
+              props.unmountTimingFunction !== undefined && !props.show
+                ? props.unmountTimingFunction
+                : props.mountTimingFunction,
             ...props.style,
           }}
           onAnimationEnd={onAnimationEnd}
@@ -129,7 +133,7 @@ function makeid(length: number) {
   return result
 }
 
-const Animated: RMAComponent = {
+const Animated: AnimatedComponent = {
   a: props => AnimatedInternal<'a'>({ tag: 'a', ...props }),
   abbr: props => AnimatedInternal<'abbr'>({ tag: 'abbr', ...props }),
   address: props => AnimatedInternal<'address'>({ tag: 'address', ...props }),
