@@ -66,6 +66,8 @@ const AnimatedInternal = <T extends keyof HTMLElements>(props: AnimatedComponent
     delete newCleanedProps['unmountDelay']
     delete newCleanedProps['onMountEnd']
     delete newCleanedProps['onUnmountEnd']
+    delete newCleanedProps['mountTimingFunction']
+    delete newCleanedProps['unmountTimingFunction']
 
     setCleanedProps(newCleanedProps)
   }, [styleSheet, props.mountAnim, props.unmountAnim, props.mountAnimId, props.unmountAnimId])
