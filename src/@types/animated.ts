@@ -1,4 +1,4 @@
-import type { ComponentPropsWithoutRef, ComponentType } from 'react'
+import { ComponentPropsWithoutRef, ReactNode } from 'react'
 
 export interface HTMLElements
   extends Omit<
@@ -107,13 +107,13 @@ export interface RMAProps {
   onUnmountEnd?: () => void
 }
 
-export interface RMAComponentProps extends RMAProps {
-  tag: keyof HTMLElements
-  style?: any
-}
+export type RMAComponentProps<T extends keyof HTMLElements> = ComponentPropsWithoutRef<T> &
+  RMAProps & {
+    tag: keyof HTMLElements
+    style?: any
+    children?: ReactNode
+  }
 
 export type RMAComponent = {
-  [K in keyof HTMLElements]: (
-    props: ComponentPropsWithoutRef<K> & Omit<RMAComponentProps, 'tag'>,
-  ) => any
+  [K in keyof HTMLElements]: (props: Omit<RMAComponentProps<K>, 'tag'>) => JSX.Element
 }
