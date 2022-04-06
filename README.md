@@ -136,6 +136,8 @@ const MyComponent = () => {
 | onAnimationEnd | function  | Callback fired when the component ends its animation (mount or unmount). |
 | onMountEnd | function  | Callback fired when the component ends its mount animation |
 | onUnmountEnd | function  | Callback fired when the component ends its unmount animation |
+| mountTimingFunction | string  | CSS timing function to be used with the mount animation. |
+| umountTimingFunction | string  | CSS timing function to be used with the unmount animation.  |
 
 <br>
 <br>
