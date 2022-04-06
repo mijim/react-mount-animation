@@ -1,2 +1,1 @@
-import Animated from './components/animated/Animated';
-export default Animated;
+export { default } from './components/animated/Animated'

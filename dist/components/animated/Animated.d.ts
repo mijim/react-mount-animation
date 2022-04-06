@@ -1,3 +1,3 @@
-import { HTMLElementsInterface } from "./model";
-declare const Animated: HTMLElementsInterface;
+import { AnimatedComponent } from '../../@types/animated';
+declare const Animated: AnimatedComponent;
 export default Animated;

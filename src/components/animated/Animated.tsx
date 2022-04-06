@@ -1,260 +1,263 @@
-import { FC, useEffect, useState } from "react";
-import { HTMLElementsInterface } from "./model";
+import { useEffect, useState } from 'react'
 
-const AnimatedInternal: FC = (props: any) => {
-  const [shouldRender, setRender] = useState(props.show);
-  const [cleanedProps, setCleanedProps] = useState(props);
-  const [mountId, setMountId] = useState("");
-  const [unmountId, setUnmountId] = useState("");
-  const [styleSheet, setStyleSheet] = useState<any>(null);
-  const CustomTag = props.tagName as keyof JSX.IntrinsicElements;
+// Types
+import { AnimatedComponentProps, AnimatedComponent, HTMLElements } from '../../@types/animated'
+
+const AnimatedInternal = <T extends keyof HTMLElements>(props: AnimatedComponentProps<T>): JSX.Element => {
+  const [shouldRender, setRender] = useState<boolean>(props.show)
+  const [cleanedProps, setCleanedProps] = useState<Partial<AnimatedComponentProps<T>>>(props)
+  const [mountId, setMountId] = useState<string>('')
+  const [unmountId, setUnmountId] = useState<string>('')
+  const [styleSheet, setStyleSheet] = useState<any>(null)
+  const CustomTag = props.tag
 
   useEffect(() => {
-    if(typeof document !== "undefined") {
-      let newStyleSheet: any = document.styleSheets[0];
+    if (typeof document !== 'undefined') {
+      let newStyleSheet: any = document.styleSheets[0]
       if (!newStyleSheet) {
-        newStyleSheet = document.createElement("style");
-        document.head.appendChild(newStyleSheet);
+        newStyleSheet = document.createElement('style')
+        document.head.appendChild(newStyleSheet)
       }
-      setStyleSheet(document.styleSheets[0]);
+      setStyleSheet(document.styleSheets[0])
     }
-  }, []);
+  }, [])
 
   useEffect(() => {
-    if(!styleSheet) return;
+    if (!styleSheet) return
     if (!!props.mountAnimId) {
-      setMountId(props.mountAnimId);
+      setMountId(props.mountAnimId)
     } else {
-      let newMountId = `mount-${makeid(8)}`;
+      let newMountId = `mount-${makeid(8)}`
       const keyframes = `@-webkit-keyframes ${newMountId} {
           ${props.mountAnim}
       }
-      `;
-      styleSheet.insertRule(keyframes, styleSheet.cssRules?styleSheet.cssRules.length:0);
-      setMountId(newMountId);
+      `
+      styleSheet.insertRule(keyframes, styleSheet.cssRules ? styleSheet.cssRules.length : 0)
+      setMountId(newMountId)
     }
 
     if (!!props.unmountAnimId) {
-      setUnmountId(props.unmountAnimId);
+      setUnmountId(props.unmountAnimId)
     } else {
-      let newUnmountId = `mount-${makeid(8)}`;
+      let newUnmountId = `mount-${makeid(8)}`
       const keyframes = `@-webkit-keyframes ${newUnmountId} {
         ${props.unmountAnim ? props.unmountAnim : props.mountAnim}
       }
-      `;
-      styleSheet.insertRule(keyframes, styleSheet.cssRules?styleSheet.cssRules.length:0);
-      setUnmountId(newUnmountId);
+      `
+      styleSheet.insertRule(keyframes, styleSheet.cssRules ? styleSheet.cssRules.length : 0)
+      setUnmountId(newUnmountId)
     }
 
     //Clean component props in DOM
+
     const newCleanedProps = {
-      ...props,
-    };
+      ...cleanedProps,
+    }
 
-    delete newCleanedProps["tagName"];
-    delete newCleanedProps["mountAnim"];
-    delete newCleanedProps["unmountAnim"];
-    delete newCleanedProps["mountAnimId"];
-    delete newCleanedProps["unmountAnimId"];
-    delete newCleanedProps["show"];
-    delete newCleanedProps["time"];
-    delete newCleanedProps["unmountTime"];
-    delete newCleanedProps["delay"];
-    delete newCleanedProps["unmountDelay"];
-    delete newCleanedProps["onMountEnd"];
-    delete newCleanedProps["onUnmountEnd"];
+    delete newCleanedProps['tag']
+    delete newCleanedProps['mountAnim']
+    delete newCleanedProps['unmountAnim']
+    delete newCleanedProps['mountAnimId']
+    delete newCleanedProps['unmountAnimId']
+    delete newCleanedProps['show']
+    delete newCleanedProps['time']
+    delete newCleanedProps['unmountTime']
+    delete newCleanedProps['delay']
+    delete newCleanedProps['unmountDelay']
+    delete newCleanedProps['onMountEnd']
+    delete newCleanedProps['onUnmountEnd']
 
-    setCleanedProps(newCleanedProps);
-  }, [
-    styleSheet,
-    props.mountAnim,
-    props.unmountAnim,
-    props.mountAnimId,
-    props.unmountAnimId,
-  ]);
+    setCleanedProps(newCleanedProps)
+  }, [styleSheet, props.mountAnim, props.unmountAnim, props.mountAnimId, props.unmountAnimId])
 
   useEffect(() => {
     if (props.show) {
-      if(props.delay) {
+      if (props.delay) {
         setTimeout(() => {
-          setRender(true);
-        },props.delay*1000)
+          setRender(true)
+        }, props.delay * 1000)
       } else {
-        setRender(true);
+        setRender(true)
       }
     }
-  }, [props.show, props.delay]);
+  }, [props.show, props.delay])
 
   const onAnimationEnd = () => {
-    if (!props.show) setRender(false);
-    if(props.onMountEnd && props.show) {
-      props.onMountEnd();
+    if (!props.show) setRender(false)
+    if (props.onMountEnd && props.show) {
+      props.onMountEnd()
     }
-    if(props.onUnmountEnd && !props.show) {
-      props.onUnmountEnd();
+    if (props.onUnmountEnd && !props.show) {
+      props.onUnmountEnd()
     }
     if (props.onAnimationEnd) {
-      props.onAnimationEnd();
+      props.onAnimationEnd()
     }
-  };
+  }
 
   return (
-    shouldRender && (
-      <CustomTag
-        {...cleanedProps}
-        style={{
-          animationName: `${props.show ? mountId : unmountId}`,
-          animationDuration: `${props.unmountTime !== undefined && !props.show
-            ?props.unmountTime
-            :props.time
-            ?props.time
-            :1}s`,
-          animationDirection:
-            props.show || !!props.unmountAnim || !!props.unmountAnimId
-              ? "normal"
-              : "reverse",
-          animationDelay: `${props.unmountDelay !== undefined  && !props.show
-            ?props.unmountDelay
-            :0}s`,
-          ...props.style,
-        }}
-        onAnimationEnd={onAnimationEnd}
-      >
-        {props.children}
-      </CustomTag>
-    )
-  );
-};
-
-function makeid(length: number) {
-  var result = "";
-  var characters =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-  var charactersLength = characters.length;
-  for (var i = 0; i < length; i++) {
-    result += characters.charAt(Math.floor(Math.random() * charactersLength));
-  }
-  return result;
+    <>
+      {shouldRender && (
+        <CustomTag
+          {...cleanedProps}
+          style={{
+            animationName: `${props.show ? mountId : unmountId}`,
+            animationDuration: `${
+              props.unmountTime !== undefined && !props.show ? props.unmountTime : props.time ? props.time : 1
+            }s`,
+            animationDirection:
+              props.show || !!props.unmountAnim || !!props.unmountAnimId ? 'normal' : 'reverse',
+            animationDelay: `${props.unmountDelay !== undefined && !props.show ? props.unmountDelay : 0}s`,
+            animationTimingFunction:
+              props.unmountTimingFunction !== undefined && !props.show
+                ? props.unmountTimingFunction
+                : props.mountTimingFunction,
+            ...props.style,
+          }}
+          onAnimationEnd={onAnimationEnd}
+        >
+          {props.children}
+        </CustomTag>
+      )}
+    </>
+  )
 }
 
-const Animated: HTMLElementsInterface = {
-  a: (props: any) => AnimatedInternal({tagName: "a", ...props}),
-  abbr: (props: any) => AnimatedInternal({tagName: "abbr", ...props}),
-  address: (props: any) => AnimatedInternal({tagName: "address", ...props}),
-  area: (props: any) => AnimatedInternal({tagName: "area", ...props}),
-  article: (props: any) => AnimatedInternal({tagName: "article", ...props}),
-  aside: (props: any) => AnimatedInternal({tagName: "aside", ...props}),
-  audio: (props: any) => AnimatedInternal({tagName: "audio", ...props}),
-  b: (props: any) => AnimatedInternal({tagName: "b", ...props}),
-  base: (props: any) => AnimatedInternal({tagName: "base", ...props}),
-  bdi: (props: any) => AnimatedInternal({tagName: "bdi", ...props}),
-  bdo: (props: any) => AnimatedInternal({tagName: "bdo", ...props}),
-  big: (props: any) => AnimatedInternal({tagName: "big", ...props}),
-  blockquote: (props: any) => AnimatedInternal({tagName: "blockquote", ...props}),
-  body: (props: any) => AnimatedInternal({tagName: "body", ...props}),
-  br: (props: any) => AnimatedInternal({tagName: "br", ...props}),
-  button: (props: any) => AnimatedInternal({tagName: "button", ...props}),
-  canvas: (props: any) => AnimatedInternal({tagName: "canvas", ...props}),
-  caption: (props: any) => AnimatedInternal({tagName: "caption", ...props}),
-  cite: (props: any) => AnimatedInternal({tagName: "cite", ...props}),
-  code: (props: any) => AnimatedInternal({tagName: "code", ...props}),
-  col: (props: any) => AnimatedInternal({tagName: "col", ...props}),
-  colgroup: (props: any) => AnimatedInternal({tagName: "colgroup", ...props}),
-  data: (props: any) => AnimatedInternal({tagName: "data", ...props}),
-  datalist: (props: any) => AnimatedInternal({tagName: "datalist", ...props}),
-  dd: (props: any) => AnimatedInternal({tagName: "dd", ...props}),
-  del: (props: any) => AnimatedInternal({tagName: "del", ...props}),
-  details: (props: any) => AnimatedInternal({tagName: "details", ...props}),
-  dfn: (props: any) => AnimatedInternal({tagName: "dfn", ...props}),
-  dialog: (props: any) => AnimatedInternal({tagName: "dialog", ...props}),
-  div: (props: any) => AnimatedInternal({tagName: "div", ...props}),
-  dl: (props: any) => AnimatedInternal({tagName: "dl", ...props}),
-  dt: (props: any) => AnimatedInternal({tagName: "dt", ...props}),
-  em: (props: any) => AnimatedInternal({tagName: "em", ...props}),
-  embed: (props: any) => AnimatedInternal({tagName: "embed", ...props}),
-  fieldset: (props: any) => AnimatedInternal({tagName: "fieldset", ...props}),
-  figcaption: (props: any) => AnimatedInternal({tagName: "figcaption", ...props}),
-  figure: (props: any) => AnimatedInternal({tagName: "figure", ...props}),
-  footer: (props: any) => AnimatedInternal({tagName: "footer", ...props}),
-  form: (props: any) => AnimatedInternal({tagName: "form", ...props}),
-  h1: (props: any) => AnimatedInternal({tagName: "h1", ...props}),
-  h2: (props: any) => AnimatedInternal({tagName: "h2", ...props}),
-  h3: (props: any) => AnimatedInternal({tagName: "h3", ...props}),
-  h4: (props: any) => AnimatedInternal({tagName: "h4", ...props}),
-  h5: (props: any) => AnimatedInternal({tagName: "h5", ...props}),
-  h6: (props: any) => AnimatedInternal({tagName: "h6", ...props}),
-  head: (props: any) => AnimatedInternal({tagName: "head", ...props}),
-  header: (props: any) => AnimatedInternal({tagName: "header", ...props}),
-  hgroup: (props: any) => AnimatedInternal({tagName: "hgroup", ...props}),
-  hr: (props: any) => AnimatedInternal({tagName: "hr", ...props}),
-  html: (props: any) => AnimatedInternal({tagName: "html", ...props}),
-  i: (props: any) => AnimatedInternal({tagName: "i", ...props}),
-  iframe: (props: any) => AnimatedInternal({tagName: "iframe", ...props}),
-  img: (props: any) => AnimatedInternal({tagName: "img", ...props}),
-  input: (props: any) => AnimatedInternal({tagName: "input", ...props}),
-  ins: (props: any) => AnimatedInternal({tagName: "ins", ...props}),
-  kbd: (props: any) => AnimatedInternal({tagName: "kbd", ...props}),
-  keygen: (props: any) => AnimatedInternal({tagName: "keygen", ...props}),
-  label: (props: any) => AnimatedInternal({tagName: "label", ...props}),
-  legend: (props: any) => AnimatedInternal({tagName: "legend", ...props}),
-  li: (props: any) => AnimatedInternal({tagName: "li", ...props}),
-  link: (props: any) => AnimatedInternal({tagName: "link", ...props}),
-  main: (props: any) => AnimatedInternal({tagName: "main", ...props}),
-  map: (props: any) => AnimatedInternal({tagName: "map", ...props}),
-  mark: (props: any) => AnimatedInternal({tagName: "mark", ...props}),
-  menu: (props: any) => AnimatedInternal({tagName: "menu", ...props}),
-  menuitem: (props: any) => AnimatedInternal({tagName: "menuitem", ...props}),
-  meta: (props: any) => AnimatedInternal({tagName: "meta", ...props}),
-  meter: (props: any) => AnimatedInternal({tagName: "meter", ...props}),
-  nav: (props: any) => AnimatedInternal({tagName: "nav", ...props}),
-  noindex: (props: any) => AnimatedInternal({tagName: "noindex", ...props}),
-  noscript: (props: any) => AnimatedInternal({tagName: "noscript", ...props}),
-  object: (props: any) => AnimatedInternal({tagName: "object", ...props}),
-  ol: (props: any) => AnimatedInternal({tagName: "ol", ...props}),
-  optgroup: (props: any) => AnimatedInternal({tagName: "optgroup", ...props}),
-  option: (props: any) => AnimatedInternal({tagName: "option", ...props}),
-  output: (props: any) => AnimatedInternal({tagName: "output", ...props}),
-  p: (props: any) => AnimatedInternal({tagName: "p", ...props}),
-  param: (props: any) => AnimatedInternal({tagName: "param", ...props}),
-  picture: (props: any) => AnimatedInternal({tagName: "picture", ...props}),
-  pre: (props: any) => AnimatedInternal({tagName: "pre", ...props}),
-  progress: (props: any) => AnimatedInternal({tagName: "progress", ...props}),
-  q: (props: any) => AnimatedInternal({tagName: "q", ...props}),
-  rp: (props: any) => AnimatedInternal({tagName: "rp", ...props}),
-  rt: (props: any) => AnimatedInternal({tagName: "rt", ...props}),
-  ruby: (props: any) => AnimatedInternal({tagName: "ruby", ...props}),
-  s: (props: any) => AnimatedInternal({tagName: "s", ...props}),
-  samp: (props: any) => AnimatedInternal({tagName: "samp", ...props}),
-  slot: (props: any) => AnimatedInternal({tagName: "slot", ...props}),
-  script: (props: any) => AnimatedInternal({tagName: "script", ...props}),
-  section: (props: any) => AnimatedInternal({tagName: "section", ...props}),
-  select: (props: any) => AnimatedInternal({tagName: "select", ...props}),
-  small: (props: any) => AnimatedInternal({tagName: "small", ...props}),
-  source: (props: any) => AnimatedInternal({tagName: "source", ...props}),
-  span: (props: any) => AnimatedInternal({tagName: "span", ...props}),
-  strong: (props: any) => AnimatedInternal({tagName: "strong", ...props}),
-  style: (props: any) => AnimatedInternal({tagName: "style", ...props}),
-  sub: (props: any) => AnimatedInternal({tagName: "sub", ...props}),
-  summary: (props: any) => AnimatedInternal({tagName: "summary", ...props}),
-  sup: (props: any) => AnimatedInternal({tagName: "sup", ...props}),
-  table: (props: any) => AnimatedInternal({tagName: "table", ...props}),
-  template: (props: any) => AnimatedInternal({tagName: "template", ...props}),
-  tbody: (props: any) => AnimatedInternal({tagName: "tbody", ...props}),
-  td: (props: any) => AnimatedInternal({tagName: "td", ...props}),
-  textarea: (props: any) => AnimatedInternal({tagName: "textarea", ...props}),
-  tfoot: (props: any) => AnimatedInternal({tagName: "tfoot", ...props}),
-  th: (props: any) => AnimatedInternal({tagName: "th", ...props}),
-  thead: (props: any) => AnimatedInternal({tagName: "thead", ...props}),
-  time: (props: any) => AnimatedInternal({tagName: "time", ...props}),
-  title: (props: any) => AnimatedInternal({tagName: "title", ...props}),
-  tr: (props: any) => AnimatedInternal({tagName: "tr", ...props}),
-  track: (props: any) => AnimatedInternal({tagName: "track", ...props}),
-  u: (props: any) => AnimatedInternal({tagName: "u", ...props}),
-  ul: (props: any) => AnimatedInternal({tagName: "ul", ...props}),
-  var: (props: any) => AnimatedInternal({tagName: "var", ...props}),
-  video: (props: any) => AnimatedInternal({tagName: "video", ...props}),
-  wbr: (props: any) => AnimatedInternal({tagName: "wbr", ...props}),
-  webview: (props: any) => AnimatedInternal({tagName: "webview", ...props}),
-};
+function makeid(length: number) {
+  var result = ''
+  var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789'
+  var charactersLength = characters.length
+  for (var i = 0; i < length; i++) {
+    result += characters.charAt(Math.floor(Math.random() * charactersLength))
+  }
+  return result
+}
 
-export default Animated;
+const Animated: AnimatedComponent = {
+  a: props => AnimatedInternal<'a'>({ tag: 'a', ...props }),
+  abbr: props => AnimatedInternal<'abbr'>({ tag: 'abbr', ...props }),
+  address: props => AnimatedInternal<'address'>({ tag: 'address', ...props }),
+  area: props => AnimatedInternal<'area'>({ tag: 'area', ...props }),
+  article: props => AnimatedInternal<'article'>({ tag: 'article', ...props }),
+  aside: props => AnimatedInternal<'aside'>({ tag: 'aside', ...props }),
+  audio: props => AnimatedInternal<'audio'>({ tag: 'audio', ...props }),
+  b: props => AnimatedInternal<'b'>({ tag: 'b', ...props }),
+  base: props => AnimatedInternal<'base'>({ tag: 'base', ...props }),
+  bdi: props => AnimatedInternal<'bdi'>({ tag: 'bdi', ...props }),
+  bdo: props => AnimatedInternal<'bdo'>({ tag: 'bdo', ...props }),
+  big: props => AnimatedInternal<'big'>({ tag: 'big', ...props }),
+  blockquote: props => AnimatedInternal<'blockquote'>({ tag: 'blockquote', ...props }),
+  body: props => AnimatedInternal<'body'>({ tag: 'body', ...props }),
+  br: props => AnimatedInternal<'br'>({ tag: 'br', ...props }),
+  button: props => AnimatedInternal<'button'>({ tag: 'button', ...props }),
+  canvas: props => AnimatedInternal<'canvas'>({ tag: 'canvas', ...props }),
+  caption: props => AnimatedInternal<'caption'>({ tag: 'caption', ...props }),
+  cite: props => AnimatedInternal<'cite'>({ tag: 'cite', ...props }),
+  code: props => AnimatedInternal<'code'>({ tag: 'code', ...props }),
+  col: props => AnimatedInternal<'col'>({ tag: 'col', ...props }),
+  colgroup: props => AnimatedInternal<'colgroup'>({ tag: 'colgroup', ...props }),
+  data: props => AnimatedInternal<'data'>({ tag: 'data', ...props }),
+  datalist: props => AnimatedInternal<'datalist'>({ tag: 'datalist', ...props }),
+  dd: props => AnimatedInternal<'dd'>({ tag: 'dd', ...props }),
+  del: props => AnimatedInternal<'del'>({ tag: 'del', ...props }),
+  details: props => AnimatedInternal<'details'>({ tag: 'details', ...props }),
+  dfn: props => AnimatedInternal<'dfn'>({ tag: 'dfn', ...props }),
+  dialog: props => AnimatedInternal<'dialog'>({ tag: 'dialog', ...props }),
+  div: props => AnimatedInternal<'div'>({ tag: 'div', ...props }),
+  dl: props => AnimatedInternal<'dl'>({ tag: 'dl', ...props }),
+  dt: props => AnimatedInternal<'dt'>({ tag: 'dt', ...props }),
+  em: props => AnimatedInternal<'em'>({ tag: 'em', ...props }),
+  embed: props => AnimatedInternal<'embed'>({ tag: 'embed', ...props }),
+  fieldset: props => AnimatedInternal<'fieldset'>({ tag: 'fieldset', ...props }),
+  figcaption: props => AnimatedInternal<'figcaption'>({ tag: 'figcaption', ...props }),
+  figure: props => AnimatedInternal<'figure'>({ tag: 'figure', ...props }),
+  footer: props => AnimatedInternal<'footer'>({ tag: 'footer', ...props }),
+  form: props => AnimatedInternal<'form'>({ tag: 'form', ...props }),
+  h1: props => AnimatedInternal<'h1'>({ tag: 'h1', ...props }),
+  h2: props => AnimatedInternal<'h2'>({ tag: 'h2', ...props }),
+  h3: props => AnimatedInternal<'h3'>({ tag: 'h3', ...props }),
+  h4: props => AnimatedInternal<'h4'>({ tag: 'h4', ...props }),
+  h5: props => AnimatedInternal<'h5'>({ tag: 'h5', ...props }),
+  h6: props => AnimatedInternal<'h6'>({ tag: 'h6', ...props }),
+  head: props => AnimatedInternal<'head'>({ tag: 'head', ...props }),
+  header: props => AnimatedInternal<'header'>({ tag: 'header', ...props }),
+  hgroup: props => AnimatedInternal<'hgroup'>({ tag: 'hgroup', ...props }),
+  hr: props => AnimatedInternal<'hr'>({ tag: 'hr', ...props }),
+  html: props => AnimatedInternal<'html'>({ tag: 'html', ...props }),
+  i: props => AnimatedInternal<'i'>({ tag: 'i', ...props }),
+  iframe: props => AnimatedInternal<'iframe'>({ tag: 'iframe', ...props }),
+  img: props => AnimatedInternal<'img'>({ tag: 'img', ...props }),
+  input: props => AnimatedInternal<'input'>({ tag: 'input', ...props }),
+  ins: props => AnimatedInternal<'ins'>({ tag: 'ins', ...props }),
+  kbd: props => AnimatedInternal<'kbd'>({ tag: 'kbd', ...props }),
+  keygen: props => AnimatedInternal<'keygen'>({ tag: 'keygen', ...props }),
+  label: props => AnimatedInternal<'label'>({ tag: 'label', ...props }),
+  legend: props => AnimatedInternal<'legend'>({ tag: 'legend', ...props }),
+  li: props => AnimatedInternal<'li'>({ tag: 'li', ...props }),
+  link: props => AnimatedInternal<'link'>({ tag: 'link', ...props }),
+  main: props => AnimatedInternal<'main'>({ tag: 'main', ...props }),
+  map: props => AnimatedInternal<'map'>({ tag: 'map', ...props }),
+  mark: props => AnimatedInternal<'mark'>({ tag: 'mark', ...props }),
+  menu: props => AnimatedInternal<'menu'>({ tag: 'menu', ...props }),
+  menuitem: props => AnimatedInternal<'menuitem'>({ tag: 'menuitem', ...props }),
+  meta: props => AnimatedInternal<'meta'>({ tag: 'meta', ...props }),
+  meter: props => AnimatedInternal<'meter'>({ tag: 'meter', ...props }),
+  nav: props => AnimatedInternal<'nav'>({ tag: 'nav', ...props }),
+  noindex: props => AnimatedInternal<'noindex'>({ tag: 'noindex', ...props }),
+  noscript: props => AnimatedInternal<'noscript'>({ tag: 'noscript', ...props }),
+  object: props => AnimatedInternal<'object'>({ tag: 'object', ...props }),
+  ol: props => AnimatedInternal<'ol'>({ tag: 'ol', ...props }),
+  optgroup: props => AnimatedInternal<'optgroup'>({ tag: 'optgroup', ...props }),
+  option: props => AnimatedInternal<'option'>({ tag: 'option', ...props }),
+  output: props => AnimatedInternal<'output'>({ tag: 'output', ...props }),
+  p: props => AnimatedInternal<'p'>({ tag: 'p', ...props }),
+  param: props => AnimatedInternal<'param'>({ tag: 'param', ...props }),
+  picture: props => AnimatedInternal<'picture'>({ tag: 'picture', ...props }),
+  pre: props => AnimatedInternal<'pre'>({ tag: 'pre', ...props }),
+  progress: props => AnimatedInternal<'progress'>({ tag: 'progress', ...props }),
+  q: props => AnimatedInternal<'q'>({ tag: 'q', ...props }),
+  rp: props => AnimatedInternal<'rp'>({ tag: 'rp', ...props }),
+  rt: props => AnimatedInternal<'rt'>({ tag: 'rt', ...props }),
+  ruby: props => AnimatedInternal<'ruby'>({ tag: 'ruby', ...props }),
+  s: props => AnimatedInternal<'s'>({ tag: 's', ...props }),
+  samp: props => AnimatedInternal<'samp'>({ tag: 'samp', ...props }),
+  slot: props => AnimatedInternal<'slot'>({ tag: 'slot', ...props }),
+  script: props => AnimatedInternal<'script'>({ tag: 'script', ...props }),
+  section: props => AnimatedInternal<'section'>({ tag: 'section', ...props }),
+  select: props => AnimatedInternal<'select'>({ tag: 'select', ...props }),
+  small: props => AnimatedInternal<'small'>({ tag: 'small', ...props }),
+  source: props => AnimatedInternal<'source'>({ tag: 'source', ...props }),
+  span: props => AnimatedInternal<'span'>({ tag: 'span', ...props }),
+  strong: props => AnimatedInternal<'strong'>({ tag: 'strong', ...props }),
+  style: props => AnimatedInternal<'style'>({ tag: 'style', ...props }),
+  sub: props => AnimatedInternal<'sub'>({ tag: 'sub', ...props }),
+  summary: props => AnimatedInternal<'summary'>({ tag: 'summary', ...props }),
+  sup: props => AnimatedInternal<'sup'>({ tag: 'sup', ...props }),
+  table: props => AnimatedInternal<'table'>({ tag: 'table', ...props }),
+  template: props => AnimatedInternal<'template'>({ tag: 'template', ...props }),
+  tbody: props => AnimatedInternal<'tbody'>({ tag: 'tbody', ...props }),
+  td: props => AnimatedInternal<'td'>({ tag: 'td', ...props }),
+  textarea: props => AnimatedInternal<'textarea'>({ tag: 'textarea', ...props }),
+  tfoot: props => AnimatedInternal<'tfoot'>({ tag: 'tfoot', ...props }),
+  th: props => AnimatedInternal<'th'>({ tag: 'th', ...props }),
+  thead: props => AnimatedInternal<'thead'>({ tag: 'thead', ...props }),
+  time: props => AnimatedInternal<'time'>({ tag: 'time', ...props }),
+  title: props => AnimatedInternal<'title'>({ tag: 'title', ...props }),
+  tr: props => AnimatedInternal<'tr'>({ tag: 'tr', ...props }),
+  track: props => AnimatedInternal<'track'>({ tag: 'track', ...props }),
+  u: props => AnimatedInternal<'u'>({ tag: 'u', ...props }),
+  ul: props => AnimatedInternal<'ul'>({ tag: 'ul', ...props }),
+  var: props => AnimatedInternal<'var'>({ tag: 'var', ...props }),
+  video: props => AnimatedInternal<'video'>({ tag: 'video', ...props }),
+  wbr: props => AnimatedInternal<'wbr'>({ tag: 'wbr', ...props }),
+  webview: props => AnimatedInternal<'webview'>({ tag: 'webview', ...props }),
+  svg: props => AnimatedInternal<'svg'>({ tag: 'svg', ...props }),
+  circle: props => AnimatedInternal<'circle'>({ tag: 'circle', ...props }),
+  ellipse: props => AnimatedInternal<'ellipse'>({ tag: 'ellipse', ...props }),
+  image: props => AnimatedInternal<'image'>({ tag: 'image', ...props }),
+  mask: props => AnimatedInternal<'mask'>({ tag: 'mask', ...props }),
+  path: props => AnimatedInternal<'path'>({ tag: 'path', ...props }),
+  rect: props => AnimatedInternal<'rect'>({ tag: 'rect', ...props }),
+}
+
+export default Animated
