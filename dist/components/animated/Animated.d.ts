@@ -1,3 +1,3 @@
-import { RMAComponent } from '../../@types/animated';
-declare const Animated: RMAComponent;
+import { AnimatedComponent } from '../../@types/animated';
+declare const Animated: AnimatedComponent;
 export default Animated;

@@ -1,7 +1,7 @@
-import { ComponentPropsWithoutRef, ReactNode } from 'react';
+/// <reference types="react" />
 export interface HTMLElements extends Omit<JSX.IntrinsicElements, 'animate' | 'animateMotion' | 'animateTransform' | 'clipPath' | 'defs' | 'desc' | 'feBlend' | 'feColorMatrix' | 'feComponentTransfer' | 'feComposite' | 'feConvolveMatrix' | 'feDiffuseLighting' | 'feDisplacementMap' | 'feDistantLight' | 'feDropShadow' | 'feFlood' | 'feFuncA' | 'feFuncB' | 'feFuncG' | 'feFuncR' | 'feGaussianBlur' | 'feImage' | 'feMerge' | 'feMergeNode' | 'feMorphology' | 'feOffset' | 'fePointLight' | 'feSpecularLighting' | 'feSpotLight' | 'feTile' | 'feTurbulence' | 'filter' | 'foreignObject' | 'g' | 'line' | 'linearGradient' | 'marker' | 'metadata' | 'mpath' | 'pattern' | 'polygon' | 'polyline' | 'radialGradient' | 'stop' | 'switch' | 'symbol' | 'text' | 'textPath' | 'tspan' | 'use' | 'view'> {
 }
-export interface RMAProps {
+export interface AnimatedProps {
     /**
      * Used to indicate when the component has to be mounted and unmounted.
      */
@@ -50,12 +50,20 @@ export interface RMAProps {
      * Callback fired when the component ends its unmount animation
      */
     onUnmountEnd?: () => void;
+    /**
+     * Timing function used for mount animation
+     */
+    mountTimingFunction?: React.CSSProperties['animationTimingFunction'];
+    /**
+     * Timing function used for unmount animation
+     */
+    unmountTimingFunction?: React.CSSProperties['animationTimingFunction'];
 }
-export declare type RMAComponentProps<T extends keyof HTMLElements> = ComponentPropsWithoutRef<T> & RMAProps & {
+export declare type AnimatedComponentProps<T extends keyof HTMLElements> = React.ComponentPropsWithoutRef<T> & AnimatedProps & {
     tag: keyof HTMLElements;
     style?: any;
-    children?: ReactNode;
+    children?: React.ReactNode;
 };
-export declare type RMAComponent = {
-    [K in keyof HTMLElements]: (props: Omit<RMAComponentProps<K>, 'tag'>) => JSX.Element;
+export declare type AnimatedComponent = {
+    [K in keyof HTMLElements]: (props: Omit<AnimatedComponentProps<K>, 'tag'>) => JSX.Element;
 };
